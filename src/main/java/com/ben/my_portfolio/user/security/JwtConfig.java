@@ -1,5 +1,6 @@
 package com.ben.my_portfolio.user.security;
 
+import com.ben.my_portfolio.user.domain.Constants;
 import com.nimbusds.jose.JWSAlgorithm;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.OctetSequenceKey;
@@ -18,14 +19,14 @@ import javax.crypto.SecretKey;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
 
+
 @Configuration
 public class JwtConfig {
 
-    private static final String SECRET = "qwertyuiopknjbgvfcdxsza24567plmx";
 
     @Bean
     public JwtEncoder jwtEncoder() {
-        SecretKey key = new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKey key = new SecretKeySpec(Constants.SECRET.getBytes(StandardCharsets.UTF_8), Constants.ALGORITHM);
 
         OctetSequenceKey jwk = new OctetSequenceKey.Builder(key)
                 .algorithm(JWSAlgorithm.HS256)
@@ -40,7 +41,7 @@ public class JwtConfig {
 
     @Bean
     public JwtDecoder jwtDecoder() {
-        SecretKey key = new SecretKeySpec(SECRET.getBytes(StandardCharsets.UTF_8), "HmacSHA256");
+        SecretKey key = new SecretKeySpec(Constants.SECRET.getBytes(StandardCharsets.UTF_8), Constants.ALGORITHM);
         return NimbusJwtDecoder.withSecretKey(key)
                 .macAlgorithm(MacAlgorithm.HS256)
                 .build();
