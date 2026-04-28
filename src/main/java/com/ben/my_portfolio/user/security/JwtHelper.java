@@ -60,16 +60,4 @@ public class JwtHelper {
         }
     }
 
-    public boolean isTokenValid(String token, String email) {
-        try {
-            var jwt = decoder.decode(token);
-            String username = jwt.getSubject();
-            Instant expiresAt = jwt.getExpiresAt();
-            return username.equals(email) &&
-                    expiresAt != null &&
-                    expiresAt.isAfter(Instant.now());
-        } catch (JwtException e) {
-            return false;
-        }
-    }
 }

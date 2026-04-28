@@ -1,6 +1,5 @@
 package com.ben.my_portfolio.user.security;
 
-
 import com.ben.my_portfolio.user.domain.User;
 import com.ben.my_portfolio.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +7,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
-
 
 @Service
 @RequiredArgsConstructor

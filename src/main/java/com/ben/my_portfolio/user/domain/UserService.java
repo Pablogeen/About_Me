@@ -65,9 +65,8 @@ public class UserService {
         log.info("Login attempt for user: {}", loginRequest.getEmail());
 
         if (!Boolean.TRUE.equals(user.getIsVerified())) {
-            throw new IllegalStateException("Account not verified. Please verify your email.");
+            throw new IllegalStateException("ACCOUNT NOT VERIFIED. PLEASE VERIFY YOUR EMAIL");
         }
-
 
         try {
             Authentication authentication =

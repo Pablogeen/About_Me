@@ -19,7 +19,6 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
         private final JwtHelper jwtHelper;
-
         private final SecurityUserDetailsService userDetailsService;
 
         @Override
@@ -29,7 +28,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String authHeader = request.getHeader("Authorization");
 
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (authHeader == null || !authHeader.startsWith("Bearer")) {
                 filterChain.doFilter(request, response);
                 return;
             }

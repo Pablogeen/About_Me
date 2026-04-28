@@ -18,12 +18,15 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
+    @Column(name = "email", length = 50)
     private String email;
+    @Column(name = "password", length = 50)
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(columnDefinition = "BIT(1)")
+    @Column(columnDefinition = "BIT(1)", name = "is_verified")
     private Boolean isVerified;
+    @Column(name = "created_at")
     private LocalDateTime createdAt;
 
 
