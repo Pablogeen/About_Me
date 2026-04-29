@@ -23,16 +23,19 @@ public class SecurityConfiguration {
     private final SecurityUserDetailsService userDetailsService;
     private final JwtDecoder jwtDecoder;
     private final JwtFilter jwtFilter;
+    private final Oauth2SuccessHandler oAuth2SuccessHandler;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(customizer->customizer.disable());
         http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.authorizeHttpRequests(requests ->
-                requests.requestMatchers("/users/**").permitAll().anyRequest().permitAll());
+                requests.requestMatchers("/users/**","/oauth2/**","/login/oauth2/**").permitAll().anyRequest().permitAll());
         http.oauth2ResourceServer(oauth2 -> oauth2
                 .jwt(jwt -> jwt.decoder(jwtDecoder)));
+        http.oauth2Login(oauth2 -> oauth2
+                .successHandler(oAuth2SuccessHandler));
               http.addFilterBefore(jwtFilter,
                         UsernamePasswordAuthenticationFilter.class);
 
