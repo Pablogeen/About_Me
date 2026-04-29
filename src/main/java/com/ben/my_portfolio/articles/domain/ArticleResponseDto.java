@@ -1,6 +1,5 @@
 package com.ben.my_portfolio.articles.domain;
 
-import com.ben.my_portfolio.users.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
