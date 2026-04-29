@@ -1,11 +1,12 @@
 package com.ben.my_portfolio.user.domain;
 
+import com.ben.my_portfolio.user.UserResponse;
 import com.ben.my_portfolio.user.security.JwtHelper;
+import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,6 +27,7 @@ public class UserService {
     private final AuthenticationManager manager;
     private final JwtHelper jwtHelper;
 
+    @Transactional
     public UserResponse registerUser(@Valid UserRequest registerRequest) {
         log.info("About to register");
 
@@ -35,7 +37,7 @@ public class UserService {
         boolean userExisted = userRepo.findByEmail(email.strip()).isPresent();
 
         if(userExisted){
-            throw new IllegalStateException("USERNAME ALREADY TAKEN");
+            throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
 
         User mappedUser = modelMapper.map(registerRequest, User.class);
@@ -61,11 +63,11 @@ public class UserService {
     public LoginResponse loginUser(@Valid UserRequest loginRequest) {
 
         var user = userRepo.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new IllegalStateException("INVALID CREDENTIALS"));
+                .orElseThrow(() -> new InvalidCredentialsException("INVALID CREDENTIALS"));
         log.info("Login attempt for user: {}", loginRequest.getEmail());
 
         if (!Boolean.TRUE.equals(user.getIsVerified())) {
-            throw new IllegalStateException("ACCOUNT NOT VERIFIED. PLEASE VERIFY YOUR EMAIL");
+            throw new AccountNotVerifiedException("ACCOUNT NOT VERIFIED. PLEASE VERIFY YOUR EMAIL");
         }
 
         try {
@@ -75,9 +77,26 @@ public class UserService {
             var jwtToken = jwtHelper.generateToken(user);
             return new LoginResponse(jwtToken.token(), jwtToken.expiresAt(), user.getEmail(), user.getRole().name());
         }catch(BadCredentialsException ex){
-            throw new IllegalStateException("INVALID CREDENTIALS");
+            throw new InvalidCredentialsException("INVALID CREDENTIALS");
         }
     }
 
+    public UserResponse getUserById(Long id) {
+        log.info("Getting user with id: {}",id);
+        User user = userRepo.findById(id).
+                orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
+
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        log.info("Mapped user to userResponse: {}",userResponse);
+        return userResponse;
     }
+
+    public String getUserEmail(Long id) {
+        log.info("About getting email of user with id: {}",id);
+        String email = userRepo.findEmailById(id).
+                orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
+        log.info("Gotten email: {}",email);
+        return email;
+    }
+}
 
