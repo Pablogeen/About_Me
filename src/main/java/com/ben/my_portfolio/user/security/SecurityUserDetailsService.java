@@ -1,6 +1,7 @@
 package com.ben.my_portfolio.user.security;
 
 import com.ben.my_portfolio.user.domain.User;
+import com.ben.my_portfolio.user.domain.UserNotFoundException;
 import com.ben.my_portfolio.user.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,7 +18,7 @@ public class SecurityUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepo.findByEmail(email)
-                .orElseThrow(() -> new UsernameNotFoundException("USERNAME NOT FOUND"));
+                .orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
         return org.springframework.security.core.userdetails.User.builder()
                 .username(user.getEmail())
                 .password(user.getPassword())
