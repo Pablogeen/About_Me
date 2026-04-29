@@ -1,12 +1,12 @@
 package com.ben.my_portfolio.user.domain;
 
+import com.ben.my_portfolio.user.UserResponse;
 import com.ben.my_portfolio.user.security.JwtHelper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -81,5 +81,22 @@ public class UserService {
         }
     }
 
+    public UserResponse getUserById(Long id) {
+        log.info("Getting user with id: {}",id);
+        User user = userRepo.findById(id).
+                orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
+
+        UserResponse userResponse = modelMapper.map(user, UserResponse.class);
+        log.info("Mapped user to userResponse: {}",userResponse);
+        return userResponse;
     }
+
+    public String getUserEmail(Long id) {
+        log.info("About getting email of user with id: {}",id);
+        String email = userRepo.findEmailById(id).
+                orElseThrow(() -> new UserNotFoundException("USER NOT FOUND"));
+        log.info("Gotten email: {}",email);
+        return email;
+    }
+}
 

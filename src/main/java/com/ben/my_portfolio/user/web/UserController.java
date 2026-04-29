@@ -2,9 +2,8 @@ package com.ben.my_portfolio.user.web;
 
 import com.ben.my_portfolio.user.domain.LoginResponse;
 import com.ben.my_portfolio.user.domain.UserRequest;
-import com.ben.my_portfolio.user.domain.UserResponse;
+import com.ben.my_portfolio.user.UserResponse;
 import com.ben.my_portfolio.user.domain.UserService;
-import com.ben.my_portfolio.user.security.JwtToken;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
