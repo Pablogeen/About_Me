@@ -1,9 +1,9 @@
 package com.ben.my_portfolio;
 
-import com.ben.my_portfolio.user.domain.AccountNotVerifiedException;
-import com.ben.my_portfolio.user.domain.EmailAlreadyExistException;
-import com.ben.my_portfolio.user.domain.InvalidCredentialsException;
-import com.ben.my_portfolio.user.domain.UserNotFoundException;
+import com.ben.my_portfolio.users.domain.AccountNotVerifiedException;
+import com.ben.my_portfolio.users.domain.EmailAlreadyExistException;
+import com.ben.my_portfolio.users.domain.InvalidCredentialsException;
+import com.ben.my_portfolio.users.domain.UserNotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
