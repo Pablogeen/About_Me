@@ -23,8 +23,8 @@ public class User {
     private String password;
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(columnDefinition = "BIT(1)", name = "is_verified")
-    private Boolean isVerified;
+    @Column(columnDefinition = "TINYINT(1)", name = "is_verified")
+    private Boolean isVerified = false;
     @Column(name = "created_at")
     private LocalDateTime createdAt;
 

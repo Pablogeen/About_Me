@@ -14,7 +14,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -29,10 +31,10 @@ public class ArticleController {
 
     @PostMapping("/write-article")
     @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
-    public ResponseEntity<ArticleResponseDto> writeArticle(
+    public ResponseEntity<ArticleResponseForUsersDto> writeArticle(
             @RequestBody @Valid ArticleRequestDto articleRequestDto, @AuthenticationPrincipal User user){
         log.info("Request made to write an article: {}",user);
-        ArticleResponseDto articleResponse = articleService.writeArticle(articleRequestDto, user);
+        ArticleResponseForUsersDto articleResponse = articleService.writeArticle(articleRequestDto, user);
         log.info("Article has been written successfully: {}",articleResponse);
         return new ResponseEntity<>(articleResponse, HttpStatus.OK);
     }
@@ -42,6 +44,12 @@ public class ArticleController {
     public ResponseEntity<Page<ArticleResponseDto>> readAllArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        System.out.println("=== AUTH: " + auth);
+        System.out.println("=== AUTHORITIES: " + auth.getAuthorities());
+        System.out.println("=== PRINCIPAL TYPE: " + auth.getPrincipal().getClass().getName());
+
         log.info("Request made to read articles - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<ArticleResponseDto> articles = articleService.readAllArticles(pageable);

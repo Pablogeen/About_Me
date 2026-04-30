@@ -23,13 +23,12 @@ public class ArticleService {
 
 
     @Transactional
-    public ArticleResponseDto writeArticle(@Valid ArticleRequestDto articleRequestDto, User user) {
+    public ArticleResponseForUsersDto writeArticle(@Valid ArticleRequestDto articleRequestDto, User user) {
         log.info("User with id {} about to write an article: ",user.getId());
 
         Article article = modelMapper.map(articleRequestDto, Article.class);
         log.info("Mapped request article to article entity: {}",article);
 
-        article.setId(UUID.randomUUID());
         article.setCreatedAt(LocalDateTime.now());
         article.setStatus(Status.PENDING);
         article.setUser(user);
@@ -37,7 +36,7 @@ public class ArticleService {
         articleRepo.save(article);
         log.info("Article saved successfully");
 
-        ArticleResponseDto savedArticle = new ArticleResponseDto();
+        ArticleResponseForUsersDto savedArticle = new ArticleResponseForUsersDto();
         savedArticle.setTitle(article.getTitle());
         savedArticle.setContent(article.getContent());
         savedArticle.setName(article.getName());
@@ -76,7 +75,7 @@ public class ArticleService {
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("Article with id exist {}:",id);
 
-        if(!"PENDING".equals(article.getStatus())){
+        if(!Status.PENDING.equals(article.getStatus())){
             log.info("Article has already been inspected. Status: {}",article.getStatus());
             throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
         }
@@ -96,7 +95,7 @@ public class ArticleService {
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("A check has been made if article with id {} is in the db:",id);
 
-        if(!"REJECTED".equals(article.getStatus())){
+        if(!Status.REJECTED.equals(article.getStatus())){
             log.info("Article been inspected. Status: {}",article.getStatus());
             throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
         }
