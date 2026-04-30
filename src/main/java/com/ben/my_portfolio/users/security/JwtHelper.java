@@ -47,6 +47,15 @@ public class JwtHelper {
         }
     }
 
+    public String extractRole(String token) {
+        try {
+            var jwt = decoder.decode(token);
+            return jwt.getClaim("role");  // ← reads role claim from JWT
+        } catch (JwtException e) {
+            return null;
+        }
+    }
+
     public boolean isTokenValid(String token, UserDetails userDetails) {
         try {
             var jwt = decoder.decode(token);
