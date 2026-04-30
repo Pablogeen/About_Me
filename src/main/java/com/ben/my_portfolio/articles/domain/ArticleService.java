@@ -68,6 +68,89 @@ public class ArticleService {
         log.info("About fetching all approved articles");
         return articleRepo.findByStatus(Status.APPROVED, pageable)
                 .map(article -> modelMapper.map(article, ArticleResponseForUsersDto.class));
+    }
 
+    @Transactional
+    public String approveArticle(UUID id) {
+        Article article = articleRepo.findById(id).
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
+        log.info("Article with id exist {}:",id);
+
+        if(!"PENDING".equals(article.getStatus())){
+            log.info("Article has already been inspected. Status: {}",article.getStatus());
+            throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
+        }
+
+        article.setStatus(Status.APPROVED);
+        log.info("Status set to approved");
+
+        articleRepo.save(article);
+        log.info("Article has been saved");
+
+        return "ARTICLE HAS BEEN APPROVED SUCCESSFULLY";
+    }
+
+    @Transactional
+    public String rejectArticle(UUID id) {
+        Article article = articleRepo.findById(id).
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
+        log.info("A check has been made if article with id {} is in the db:",id);
+
+        if(!"REJECTED".equals(article.getStatus())){
+            log.info("Article been inspected. Status: {}",article.getStatus());
+            throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
+        }
+
+        article.setStatus(Status.REJECTED);
+        log.info("Status set to rejected");
+
+        articleRepo.save(article);
+        log.info("Status has been saved");
+
+        return "ARTICLE HAS BEEN REJECTED SUCCESSFULLY";
+    }
+
+    @Transactional(readOnly = true)
+    public ArticleResponseForUsersDto getArticleById(UUID id) {
+        log.info("About to get article of id: {}",id);
+        Article article = articleRepo.findById(id).
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
+
+        ArticleResponseForUsersDto articleResponse = modelMapper.map(article, ArticleResponseForUsersDto.class);
+        log.info("Article with id:{}, {}",id, articleResponse);
+
+        return articleResponse;
+    }
+
+    @Transactional
+    public ArticleResponseForUsersDto updateArticle(UUID id, @Valid ArticleRequestDto requestDto) {
+        log.info("About to update request with id: {}",id);
+        Article article = articleRepo.findById(id).
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOND"));
+
+        article.setTitle(requestDto.getTitle());
+        article.setContent(requestDto.getContent());
+        article.setName(requestDto.getName());
+        article.setAbout(requestDto.getAbout());
+
+        articleRepo.save(article);
+        log.info("Article has been updated");
+
+        ArticleResponseForUsersDto updatedResponse = modelMapper.map(article, ArticleResponseForUsersDto.class);
+        log.info("Mapped entity response to dto: {}",updatedResponse);
+
+        return updatedResponse;
+    }
+
+    @Transactional
+    public String deleteArticle(UUID id) {
+        log.info("About to delete article with id: {}",id);
+        Article article = articleRepo.findById(id).
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOND"));
+
+        articleRepo.delete(article);
+        log.info("Article has been deleted");
+
+        return "ARTICLE HAS BEEN DELETED SUCCESSFULLY";
     }
 }

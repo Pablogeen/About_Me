@@ -1,7 +1,7 @@
 package com.ben.my_portfolio.users.security;
 
-import com.ben.my_portfolio.users.domain.Role;
 import com.ben.my_portfolio.users.User;
+import com.ben.my_portfolio.users.Role;
 import com.ben.my_portfolio.users.domain.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

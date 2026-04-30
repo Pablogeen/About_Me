@@ -1,6 +1,5 @@
 package com.ben.my_portfolio.users;
 
-import com.ben.my_portfolio.users.domain.Role;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

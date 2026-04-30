@@ -1,5 +1,6 @@
 package com.ben.my_portfolio.users.domain;
 
+import com.ben.my_portfolio.users.Role;
 import com.ben.my_portfolio.users.User;
 import com.ben.my_portfolio.users.UserResponse;
 import com.ben.my_portfolio.users.security.JwtHelper;
