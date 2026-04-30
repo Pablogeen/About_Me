@@ -11,12 +11,13 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/articles")
@@ -44,7 +45,7 @@ public class ArticleController {
         log.info("Request made to read articles - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<ArticleResponseDto> articles = articleService.readAllArticles(pageable);
-        log.info("Returning {} articles", articles.getTotalElements());
+        log.info("{} articles", articles.getTotalElements());
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
@@ -58,6 +59,52 @@ public class ArticleController {
         log.info("Returning {} all approved articles", articles.getTotalElements());
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
+
+    @PostMapping("/{id}/approve-article")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> approveArticle(@PathVariable UUID id){
+        log.info("Request to approve article with id: {}",id);
+        String response = articleService.approveArticle(id);
+        log.info("Article has been approved ");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @PostMapping("/{id}/reject-article")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<String> rejectArticle(@PathVariable UUID id){
+        log.info("Request to reject article with id: {}",id);
+        String response = articleService.rejectArticle(id);
+        log.info("Article has been rejected");
+        return new ResponseEntity<>(response, HttpStatus.OK);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ArticleResponseForUsersDto> getArticleById(@PathVariable UUID id){
+        log.info("Request made to get an article by id: {}",id);
+        ArticleResponseForUsersDto articleResponse = articleService.getArticleById(id);
+        log.info("Article gotten: {}", articleResponse);
+        return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+    }
+
+    @PutMapping("/{id}/update")
+    @PreAuthorize("@ArticleSecurity.isOnwer(#id, authentication)")
+    public ResponseEntity<ArticleResponseForUsersDto>
+                        updateArticle(@PathVariable UUID id, @RequestBody @Valid ArticleRequestDto requestDto){
+        log.info("Call made to update article with id: {}",id);
+        ArticleResponseForUsersDto articleResponse = articleService.updateArticle(id, requestDto);
+        log.info("Article Updated successfully");
+        return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/{id}/delete")
+    @PreAuthorize("@ArticleSecurity.isOnwer(#id, authentication)")
+    public ResponseEntity<String> deleteArticle(@PathVariable UUID id){
+        log.info("Call made to delete article with id: {}",id);
+        String articleResponse = articleService.deleteArticle(id);
+        log.info("Article Deleted successfully");
+        return new ResponseEntity<>(articleResponse, HttpStatus.NO_CONTENT);
+    }
+
 
 
 }

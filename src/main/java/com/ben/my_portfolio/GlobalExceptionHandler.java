@@ -1,5 +1,7 @@
 package com.ben.my_portfolio;
 
+import com.ben.my_portfolio.articles.domain.ArticleAlreadyInspectedException;
+import com.ben.my_portfolio.articles.domain.ArticleNotFoundException;
 import com.ben.my_portfolio.users.domain.AccountNotVerifiedException;
 import com.ben.my_portfolio.users.domain.EmailAlreadyExistException;
 import com.ben.my_portfolio.users.domain.InvalidCredentialsException;
@@ -29,7 +31,6 @@ public class GlobalExceptionHandler {
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.INTERNAL_SERVER_ERROR);
-
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
@@ -54,7 +55,6 @@ public class GlobalExceptionHandler {
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
-
     }
 
     @ExceptionHandler(UserNotFoundException.class)
@@ -66,7 +66,6 @@ public class GlobalExceptionHandler {
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
-
     }
 
     @ExceptionHandler(AccountNotVerifiedException.class)
@@ -78,7 +77,6 @@ public class GlobalExceptionHandler {
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.BAD_REQUEST);
-
     }
 
     @ExceptionHandler(InvalidCredentialsException.class)
@@ -87,6 +85,31 @@ public class GlobalExceptionHandler {
         ErrorDetails details = new ErrorDetails(
                 e.getMessage(),
                 "INVALID CREDENTIALS",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(ArticleNotFoundException.class)
+    public ResponseEntity<?> articleNotFoundException(ArticleNotFoundException e, WebRequest request) {
+        log.error("Article not found exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "ARTICLE NOT FOUND",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.NOT_FOUND);
+
+    }
+
+    @ExceptionHandler(ArticleAlreadyInspectedException.class)
+    public ResponseEntity<?> articleAlreadyInspectedException(ArticleAlreadyInspectedException e,
+                                                              WebRequest request) {
+        log.error("Article already inspected exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "ARTICLE ALREADY INSPECTED",
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
