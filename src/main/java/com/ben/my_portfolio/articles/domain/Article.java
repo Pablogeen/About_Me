@@ -18,6 +18,8 @@ import java.util.UUID;
 public class Article {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    @Column(name = "id", columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
     @Column(name = "title", nullable = false, length = 100)
     private String title;
