@@ -1,12 +1,14 @@
 package com.ben.my_portfolio.articles.domain;
 
 import com.ben.my_portfolio.users.User;
-import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -36,15 +38,36 @@ public class ArticleService {
         log.info("Article saved successfully");
 
         ArticleResponseDto savedArticle = new ArticleResponseDto();
-        savedArticle.setId(article.getId());
         savedArticle.setTitle(article.getTitle());
         savedArticle.setContent(article.getContent());
         savedArticle.setName(article.getName());
         savedArticle.setAbout(article.getAbout());
-        savedArticle.setCreatedAt(article.getCreatedAt());
-        savedArticle.setUserId(article.getUser().getId());
         log.info("Article response: {}",savedArticle);
 
         return savedArticle;
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ArticleResponseDto> readAllArticles(Pageable pageable) {
+        return articleRepo.findAll(pageable)
+                .map(article -> {
+                    ArticleResponseDto response = new ArticleResponseDto();
+                    response.setTitle(article.getTitle());
+                    response.setContent(article.getContent());
+                    response.setAbout(article.getAbout());
+                    response.setCreatedAt(article.getCreatedAt());
+                    response.setStatus(String.valueOf(article.getStatus()));
+                    response.setName(article.getName());
+                    response.setUserId(article.getUser().getId());
+                    return response;
+                });
+    }
+
+    @Transactional(readOnly = true)
+    public Page<ArticleResponseForUsersDto> readApprovedArticles(Pageable pageable) {
+        log.info("About fetching all approved articles");
+        return articleRepo.findByStatus(Status.APPROVED, pageable)
+                .map(article -> modelMapper.map(article, ArticleResponseForUsersDto.class));
+
     }
 }
