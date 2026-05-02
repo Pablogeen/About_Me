@@ -1,5 +1,6 @@
 package com.ben.my_portfolio;
 
+import com.ben.my_portfolio.articles.domain.AccessDeniedException;
 import com.ben.my_portfolio.articles.domain.ArticleAlreadyInspectedException;
 import com.ben.my_portfolio.articles.domain.ArticleNotFoundException;
 import com.ben.my_portfolio.users.domain.AccountNotVerifiedException;
@@ -110,6 +111,18 @@ public class GlobalExceptionHandler {
         ErrorDetails details = new ErrorDetails(
                 e.getMessage(),
                 "ARTICLE ALREADY INSPECTED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<?> accessDeniedException(AccessDeniedException e, WebRequest request) {
+        log.error("Access Denied Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "UNAUTHORIZED",
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
