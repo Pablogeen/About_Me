@@ -126,7 +126,7 @@ public class ArticleService {
         log.info("About to update request with id: {} and user {}",id,user);
 
         Article article = articleRepo.findById(id).
-                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOND"));
+                orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("Article found: {}",article);
 
         Long articleOwnerId = article.getUser().getId();
