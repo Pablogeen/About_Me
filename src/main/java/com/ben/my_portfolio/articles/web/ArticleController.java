@@ -34,7 +34,7 @@ public class ArticleController {
         log.info("Request made to write an article: {}",user);
         ArticleResponseForUsersDto articleResponse = articleService.writeArticle(articleRequestDto, user);
         log.info("Article has been written successfully: {}",articleResponse);
-        return new ResponseEntity<>(articleResponse, HttpStatus.OK);
+        return new ResponseEntity<>(articleResponse, HttpStatus.CREATED);
     }
 
     @GetMapping("/read-all-articles")
