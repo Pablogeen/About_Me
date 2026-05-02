@@ -122,10 +122,23 @@ public class ArticleService {
     }
 
     @Transactional
-    public ArticleResponseForUsersDto updateArticle(UUID id, @Valid ArticleRequestDto requestDto) {
-        log.info("About to update request with id: {}",id);
+    public ArticleResponseForUsersDto updateArticle(UUID id, @Valid ArticleRequestDto requestDto, User user) {
+        log.info("About to update request with id: {} and user {}",id,user);
+
         Article article = articleRepo.findById(id).
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOND"));
+        log.info("Article found: {}",article);
+
+        Long articleOwnerId = article.getUser().getId();
+        Long requestingUserId = user.getId();
+
+        log.info("Article owner ID: {}", articleOwnerId);
+        log.info("Requesting user ID: {}", requestingUserId);
+
+        if (!articleOwnerId.equals(requestingUserId)) {
+            log.info("You're not the owner of the article");
+            throw new AccessDeniedException("YOU ARE NOT THE OWNER OF THIS ARTICLE");
+        }
 
         article.setTitle(requestDto.getTitle());
         article.setContent(requestDto.getContent());
@@ -142,10 +155,22 @@ public class ArticleService {
     }
 
     @Transactional
-    public String deleteArticle(UUID id) {
+    public String deleteArticle(UUID id, User user) {
         log.info("About to delete article with id: {}",id);
         Article article = articleRepo.findById(id).
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOND"));
+        log.info("Article gotten: {}",article);
+
+        Long articleOwnerId = article.getUser().getId();
+        Long requestingUserId = user.getId();
+
+        log.info("Owner ID: {}", articleOwnerId);
+        log.info("Current User ID: {}", requestingUserId);
+
+        if (!articleOwnerId.equals(requestingUserId)) {
+            log.info("You're not the actual owner of the article");
+            throw new AccessDeniedException("YOU ARE NOT THE OWNER OF THIS ARTICLE");
+        }
 
         articleRepo.delete(article);
         log.info("Article has been deleted");

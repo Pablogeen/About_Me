@@ -14,9 +14,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
@@ -44,12 +42,6 @@ public class ArticleController {
     public ResponseEntity<Page<ArticleResponseDto>> readAllArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
-
-        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        System.out.println("=== AUTH: " + auth);
-        System.out.println("=== AUTHORITIES: " + auth.getAuthorities());
-        System.out.println("=== PRINCIPAL TYPE: " + auth.getPrincipal().getClass().getName());
-
         log.info("Request made to read articles - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<ArticleResponseDto> articles = articleService.readAllArticles(pageable);
@@ -95,20 +87,21 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}/update")
-    @PreAuthorize("@ArticleSecurity.isOnwer(#id, authentication)")
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
     public ResponseEntity<ArticleResponseForUsersDto>
-                        updateArticle(@PathVariable UUID id, @RequestBody @Valid ArticleRequestDto requestDto){
+                        updateArticle(@PathVariable UUID id, @RequestBody @Valid ArticleRequestDto requestDto,
+                                      @AuthenticationPrincipal User user){
         log.info("Call made to update article with id: {}",id);
-        ArticleResponseForUsersDto articleResponse = articleService.updateArticle(id, requestDto);
+        ArticleResponseForUsersDto articleResponse = articleService.updateArticle(id, requestDto, user);
         log.info("Article Updated successfully");
         return new ResponseEntity<>(articleResponse, HttpStatus.OK);
     }
 
     @DeleteMapping("/{id}/delete")
-    @PreAuthorize("@ArticleSecurity.isOnwer(#id, authentication)")
-    public ResponseEntity<String> deleteArticle(@PathVariable UUID id){
+    @PreAuthorize("hasAnyAuthority('USER','ADMIN')")
+    public ResponseEntity<String> deleteArticle(@PathVariable UUID id, @AuthenticationPrincipal User user){
         log.info("Call made to delete article with id: {}",id);
-        String articleResponse = articleService.deleteArticle(id);
+        String articleResponse = articleService.deleteArticle(id, user);
         log.info("Article Deleted successfully");
         return new ResponseEntity<>(articleResponse, HttpStatus.NO_CONTENT);
     }
