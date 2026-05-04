@@ -3,12 +3,14 @@ package com.ben.my_portfolio.users.domain;
 import com.ben.my_portfolio.users.Role;
 import com.ben.my_portfolio.users.User;
 import com.ben.my_portfolio.users.UserResponse;
+import com.ben.my_portfolio.users.UserRegisteredEvent;
 import com.ben.my_portfolio.users.security.JwtHelper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -28,6 +30,7 @@ public class UserService {
     private final BCryptPasswordEncoder passwordEncoder;
     private final AuthenticationManager manager;
     private final JwtHelper jwtHelper;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Transactional
     public UserResponse registerUser(@Valid UserRequest registerRequest) {
@@ -55,6 +58,8 @@ public class UserService {
 
         User savedUser = userRepo.save(mappedUser);
         log.info("User has been saved");
+
+        eventPublisher.publishEvent(new UserRegisteredEvent(savedUser.getEmail(), "1235"));
 
         UserResponse userResponse = modelMapper.map(savedUser, UserResponse.class);
         log.info("User response: {}",userResponse);

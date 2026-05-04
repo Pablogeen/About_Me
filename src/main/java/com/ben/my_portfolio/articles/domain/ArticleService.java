@@ -1,10 +1,12 @@
 package com.ben.my_portfolio.articles.domain;
 
+import com.ben.my_portfolio.articles.ArticleContributedEvent;
 import com.ben.my_portfolio.users.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -20,6 +22,7 @@ public class ArticleService {
 
     private final ArticleRepository articleRepo;
     private final ModelMapper modelMapper;
+    private final ApplicationEventPublisher eventPublisher;
 
 
     @Transactional
@@ -29,6 +32,7 @@ public class ArticleService {
         Article article = modelMapper.map(articleRequestDto, Article.class);
         log.info("Mapped request article to article entity: {}",article);
 
+        article.setTitle(articleRequestDto.getTitle().toUpperCase());
         article.setCreatedAt(LocalDateTime.now());
         article.setStatus(Status.PENDING);
         article.setUser(user);
@@ -42,6 +46,8 @@ public class ArticleService {
         savedArticle.setName(article.getName());
         savedArticle.setAbout(article.getAbout());
         log.info("Article response: {}",savedArticle);
+
+        eventPublisher.publishEvent(new ArticleContributedEvent(article.getUser().getEmail(), article.getTitle()));
 
         return savedArticle;
     }
