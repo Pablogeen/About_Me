@@ -1,6 +1,8 @@
 package com.ben.my_portfolio.articles.domain;
 
 import com.ben.my_portfolio.articles.ArticleContributedEvent;
+import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
+import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
 import com.ben.my_portfolio.users.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -92,6 +94,9 @@ public class ArticleService {
         articleRepo.save(article);
         log.info("Article has been saved");
 
+        eventPublisher.publishEvent(new ArticleReviewedApprovedEvent(article.getUser().getEmail(), article.getTitle()));
+        log.info("Email sent successfully");
+
         return "ARTICLE HAS BEEN APPROVED SUCCESSFULLY";
     }
 
@@ -111,6 +116,9 @@ public class ArticleService {
 
         articleRepo.save(article);
         log.info("Status has been saved");
+
+        eventPublisher.publishEvent(new ArticleReviewedRejectedEvent(article.getUser().getEmail(), article.getTitle()));
+        log.info("Email sent successfully");
 
         return "ARTICLE HAS BEEN REJECTED SUCCESSFULLY";
     }
