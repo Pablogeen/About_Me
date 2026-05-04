@@ -2,6 +2,8 @@ package com.ben.my_portfolio.notification.domain;
 
 
 import com.ben.my_portfolio.articles.ArticleContributedEvent;
+import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
+import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
 import com.ben.my_portfolio.users.UserRegisteredEvent;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,25 @@ public class EmailService {
                 emailBuilder.buildAdminNotificationEmailHtml(event.articleTitle(), event.email())
         );
     }
+
+    @ApplicationModuleListener
+    public void onArticleApproved(ArticleReviewedApprovedEvent event) {
+        emailSender.sendEmail(
+                event.contributorEmail(),
+                "Your Article Has Been Approved — BEN & CO",
+                emailBuilder.buildArticleApprovedEmailHtml(event.articleTitle())
+        );
+    }
+
+    @ApplicationModuleListener
+    public void onArticleRejected(ArticleReviewedRejectedEvent event) {
+        emailSender.sendEmail(
+                event.contributorEmail(),
+                "Regarding Your Article Submission — BEN & CO",
+                emailBuilder.buildArticleRejectedEmailHtml(event.articleTitle())
+        );
+    }
+
 
 
 
