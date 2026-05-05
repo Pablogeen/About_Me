@@ -3,10 +3,7 @@ package com.ben.my_portfolio;
 import com.ben.my_portfolio.articles.domain.AccessDeniedException;
 import com.ben.my_portfolio.articles.domain.ArticleAlreadyInspectedException;
 import com.ben.my_portfolio.articles.domain.ArticleNotFoundException;
-import com.ben.my_portfolio.users.domain.AccountNotVerifiedException;
-import com.ben.my_portfolio.users.domain.EmailAlreadyExistException;
-import com.ben.my_portfolio.users.domain.InvalidCredentialsException;
-import com.ben.my_portfolio.users.domain.UserNotFoundException;
+import com.ben.my_portfolio.users.domain.*;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -123,6 +120,42 @@ public class GlobalExceptionHandler {
         ErrorDetails details = new ErrorDetails(
                 e.getMessage(),
                 "UNAUTHORIZED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(TokenNotFoundException.class)
+    public ResponseEntity<?> tokenNotFoundException(TokenNotFoundException e, WebRequest request) {
+        log.error("Token Not Found Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "TOKEN NOT FOUND",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(TokenAlreadyConfirmedException.class)
+    public ResponseEntity<?> tokenAlreadyConfirmed(TokenAlreadyConfirmedException e, WebRequest request) {
+        log.error("Token already confirmed Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "TOKEN ALREADY CONFIRMED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+
+    }
+
+    @ExceptionHandler(TokenExpiredException.class)
+    public ResponseEntity<?> tokenExpiredException(TokenExpiredException e, WebRequest request) {
+        log.error("Token Expired Exception");
+        ErrorDetails details = new ErrorDetails(
+                e.getMessage(),
+                "TOKEN HAS EXPIRED",
                 request.getDescription(false),
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);

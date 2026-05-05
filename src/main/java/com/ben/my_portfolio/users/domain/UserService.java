@@ -1,9 +1,6 @@
 package com.ben.my_portfolio.users.domain;
 
-import com.ben.my_portfolio.users.Role;
-import com.ben.my_portfolio.users.User;
-import com.ben.my_portfolio.users.UserResponse;
-import com.ben.my_portfolio.users.UserRegisteredEvent;
+import com.ben.my_portfolio.users.*;
 import com.ben.my_portfolio.users.security.JwtHelper;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -19,6 +16,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.Optional;
 
 @Service
 @Slf4j
@@ -31,6 +29,8 @@ public class UserService {
     private final AuthenticationManager manager;
     private final JwtHelper jwtHelper;
     private final ApplicationEventPublisher eventPublisher;
+    private final ConfirmationTokenHelper tokenHelper;
+    private final ConfirmationTokenService tokenService;
 
     @Transactional
     public UserResponse registerUser(@Valid UserRequest registerRequest) {
@@ -59,7 +59,10 @@ public class UserService {
         User savedUser = userRepo.save(mappedUser);
         log.info("User has been saved");
 
-        eventPublisher.publishEvent(new UserRegisteredEvent(savedUser.getEmail(), "1235"));
+        String token = tokenHelper.saveConfirmationToken(savedUser);
+        log.info("Token has been saved");
+
+        eventPublisher.publishEvent(new UserRegisteredEvent(savedUser.getEmail(), token));
 
         UserResponse userResponse = modelMapper.map(savedUser, UserResponse.class);
         log.info("User response: {}",userResponse);
@@ -107,5 +110,50 @@ public class UserService {
     }
 
 
+    public String confirmAccount(String token) {
+        log.info("About to confirm token:");
+        ConfirmationToken confirmToken = tokenService.getToken(token)
+                .orElseThrow(()-> new TokenNotFoundException("TOKEN NOT FOUND"));
+        log.info("Confirmation Token from the db");
+
+        if (confirmToken.getConfirmedAt() !=null){
+            log.error("Token already confirmed");
+            throw new TokenAlreadyConfirmedException("TOKEN ALREADY CONFIRMED");
+        }
+
+        if(confirmToken.getExpires().isBefore(LocalDateTime.now())){
+            log.error("Token expired");
+            throw new TokenExpiredException("TOKEN EXPIRED");
+        }
+
+        tokenService.setConfirmationDetails(token);
+
+        String email = confirmToken.getUser().getEmail();
+        verifyUser(email);
+        return "ACCOUNT WAS SUCCESSFULLY VERIFIED";
+    }
+
+    public void verifyUser(String email){
+         userRepo.verifyUser(email);
+    }
+
+    @Service
+    @RequiredArgsConstructor
+    public static class ConfirmationTokenService {
+
+        private final ConfirmationTokenRepository tokenRepo;
+
+        public void saveConfirmationToken(ConfirmationToken confirmToken) {
+            tokenRepo.save(confirmToken);
+        }
+
+        public Optional<ConfirmationToken> getToken(String token) {
+            return tokenRepo.findByToken(token);
+        }
+
+        public int setConfirmationDetails(String token) {
+            return  tokenRepo.updateConfirmationDetails(token, LocalDateTime.now());
+        }
+    }
 }
 
