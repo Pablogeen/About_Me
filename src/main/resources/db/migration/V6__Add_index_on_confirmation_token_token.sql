@@ -1,0 +1,1 @@
+CREATE INDEX idx_confirmation_token_token ON confirmation_token(token);
