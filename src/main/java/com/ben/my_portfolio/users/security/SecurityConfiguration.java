@@ -33,8 +33,8 @@ public class SecurityConfiguration {
         http.sessionManagement(session ->
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/users/sign-in", "/users/sign-up", "/oauth2/**",
-                        "/login/oauth2/**", "articles", "/articles/{id}")
+                .requestMatchers("/users/**", "/oauth2/**",
+                        "/login/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
          http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {

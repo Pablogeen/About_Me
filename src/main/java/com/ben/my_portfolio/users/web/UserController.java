@@ -33,7 +33,14 @@ public class UserController {
         LoginResponse loggedInUser = userService.loginUser(loginRequest);
         log.info("User logged in successfully: ");
         return new ResponseEntity<>(loggedInUser, HttpStatus.OK);
+    }
 
+    @GetMapping("/confirm-account")
+    public ResponseEntity<String>confirmAccount(@RequestParam String token){
+        log.info("Call made to confirmAccount:");
+       String confirmedAccount = userService.confirmAccount(token);
+       log.info("Account has been verified");
+        return new ResponseEntity<>(confirmedAccount, HttpStatus.OK);
     }
 
 

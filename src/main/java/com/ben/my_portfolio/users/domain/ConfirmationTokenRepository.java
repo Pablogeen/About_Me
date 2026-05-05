@@ -1,6 +1,5 @@
 package com.ben.my_portfolio.users.domain;
 
-import com.ben.my_portfolio.users.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -8,18 +7,18 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface ConfirmationTokenRepository extends JpaRepository<ConfirmationToken, Long> {
 
-    Optional<User> findByEmail(String email);
+    Optional<ConfirmationToken> findByToken(String token);
 
-    @Query("SELECT u.email FROM User u WHERE u.id = :id")
-    Optional<String> findEmailById(Long id);
 
     @Modifying
     @Transactional
-    @Query(value = "UPDATE user SET is_verified = true WHERE email = :email", nativeQuery = true)
-    void verifyUser(@Param("email") String email);
+    @Query(value = "UPDATE confirmation_token SET confirmed_at = :confirmedAt WHERE token = :token", nativeQuery = true)
+    int updateConfirmationDetails(@Param("token") String token, @Param("confirmedAt") LocalDateTime confirmedAt);
 }
+

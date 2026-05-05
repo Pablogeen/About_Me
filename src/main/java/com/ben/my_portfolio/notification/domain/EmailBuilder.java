@@ -57,7 +57,7 @@ public class EmailBuilder {
                       </table>
 
                       <p style="margin:0 0 20px 0; font-size:14px; line-height:1.7; color:#a89e8a;">
-                        This token will expire in <strong style="color:#e8dfc8;">15 minutes</strong> for security reasons.
+                        This token will expire in <strong style="color:#e8dfc8;">5 minutes</strong> for security reasons.
                       </p>
 
                       <p style="margin:0; font-size:14px; line-height:1.7; color:#a89e8a;">
