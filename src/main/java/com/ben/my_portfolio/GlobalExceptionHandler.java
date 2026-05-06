@@ -161,4 +161,15 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(details, HttpStatus.CONFLICT);
 
     }
+
+    @ExceptionHandler(RateLimitException.class)
+    public ResponseEntity<?> handleRateLimit(RateLimitException ex, WebRequest request) {
+        log.error("Rate limit exception");
+        ErrorDetails details = new ErrorDetails(
+                ex.getMessage(),
+                "RATE LIMIT EXCEEDED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.TOO_MANY_REQUESTS);
+    }
 }
