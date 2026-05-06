@@ -16,56 +16,59 @@ import org.springframework.stereotype.Service;
 @Slf4j
 public class EmailService {
 
+    private final EmailOutboxRepository outboxRepository;
+
     @Value("${app.admin.email}")
     private String adminEmail;
 
-
-    private final EmailBuilder emailBuilder;
-    private final EmailSender emailSender;
-
     @ApplicationModuleListener
     public void onUserRegistered(UserRegisteredEvent event) {
-        emailSender.sendEmail(
+        outboxRepository.save(new EmailOutbox(
                 event.email(),
                 "Verify Your Email — BEN & CO",
-                emailBuilder.buildVerificationEmailHtml(event.token())
-        );
+                EmailType.VERIFICATION,
+                event.token()));
+
     }
 
     @ApplicationModuleListener
     public void onArticleContributed(ArticleContributedEvent event) {
-        emailSender.sendEmail(
+        outboxRepository.save(new EmailOutbox(
                 event.email(),
                 "Thank You for Your Contribution — BEN & CO",
-                emailBuilder.buildContributionEmailHtml(event.articleTitle())
-        );
+                EmailType.CONTRIBUTION,
+                event.articleTitle()));
+
     }
 
     @ApplicationModuleListener
     public void onArticleContributedNotifyAdmin(ArticleContributedEvent event) {
-        emailSender.sendEmail(
+        outboxRepository.save(new EmailOutbox(
                 adminEmail,
                 "New Article Submission — BEN & CO",
-                emailBuilder.buildAdminNotificationEmailHtml(event.articleTitle(), event.email())
-        );
+                EmailType.ADMIN_NOTIFICATION,
+                event.articleTitle() + "|" + event.email()));
+
     }
 
     @ApplicationModuleListener
     public void onArticleApproved(ArticleReviewedApprovedEvent event) {
-        emailSender.sendEmail(
+        outboxRepository.save(new EmailOutbox(
                 event.contributorEmail(),
                 "Your Article Has Been Approved — BEN & CO",
-                emailBuilder.buildArticleApprovedEmailHtml(event.articleTitle())
-        );
+                EmailType.ARTICLE_APPROVED,
+                event.articleTitle()));
+
     }
 
     @ApplicationModuleListener
     public void onArticleRejected(ArticleReviewedRejectedEvent event) {
-        emailSender.sendEmail(
+        outboxRepository.save(new EmailOutbox(
                 event.contributorEmail(),
                 "Regarding Your Article Submission — BEN & CO",
-                emailBuilder.buildArticleRejectedEmailHtml(event.articleTitle())
-        );
+                EmailType.ARTICLE_REJECTED,
+                event.articleTitle()));
+
     }
 
 
