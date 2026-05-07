@@ -16,6 +16,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.session.DisableEncodeUrlFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -35,10 +36,9 @@ public class SecurityConfiguration {
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/users/**", "/oauth2/**",
-                        "/oauth2/**", "/articles", "/articles/{id}")
+                        "/login/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
-        http.addFilterBefore(rateLimitFilter,
-                UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(rateLimitFilter, DisableEncodeUrlFilter.class);
          http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
@@ -47,8 +47,7 @@ public class SecurityConfiguration {
                             "{\"error\": \"Unauthorized - Please provide a valid JWT token\"}");}));
                 http.oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler));
-              http.addFilterBefore(jwtFilter,
-                        UsernamePasswordAuthenticationFilter.class);
+              http.addFilterAfter(jwtFilter, RateLimitFilter.class);
 
         return http.build();
     }

@@ -82,7 +82,7 @@ public class RateLimitFilter extends OncePerRequestFilter{
             return rateLimitConfig.signUpConfig();
         } else if (path.equals("/users/confirm-account")) {
             return rateLimitConfig.confirmAccountConfig();
-        } else if (path.startsWith("/oauth2")) {
+        } else if (path.startsWith("/oauth2") || path.startsWith("/login/oauth2")) {
             return rateLimitConfig.oauth2Config();
         } else if (path.startsWith("/articles") ||
                 path.startsWith("/profile")) {
