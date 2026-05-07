@@ -26,6 +26,7 @@ public class SecurityConfiguration {
     private final SecurityUserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
     private final Oauth2SuccessHandler oAuth2SuccessHandler;
+    private final RateLimitFilter rateLimitFilter;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -34,8 +35,10 @@ public class SecurityConfiguration {
                 session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/users/**", "/oauth2/**",
-                        "/login/oauth2/**", "/articles", "/articles/{id}")
+                        "/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
+        http.addFilterBefore(rateLimitFilter,
+                UsernamePasswordAuthenticationFilter.class);
          http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
