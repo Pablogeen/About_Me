@@ -4,10 +4,14 @@ import com.ben.my_portfolio.articles.ArticleContributedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
 import com.ben.my_portfolio.users.User;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,6 +19,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Service
@@ -27,6 +32,7 @@ public class ArticleService {
     private final ApplicationEventPublisher eventPublisher;
 
 
+    @CacheEvict(value = "articles", allEntries = true)
     @Transactional
     public ArticleResponseForUsersDto writeArticle(@Valid ArticleRequestDto articleRequestDto, User user) {
         log.info("User with id {} about to write an article: ",user.getId());
@@ -54,8 +60,11 @@ public class ArticleService {
         return savedArticle;
     }
 
+    @Cacheable(
+            value = "articles",
+            key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     @Transactional(readOnly = true)
-    public Page<ArticleResponseDto> readAllArticles(Pageable pageable) {
+    public List<ArticleResponseDto> readAllArticles(Pageable pageable) {
         return articleRepo.findAll(pageable)
                 .map(article -> {
                     ArticleResponseDto response = new ArticleResponseDto();
@@ -66,17 +75,22 @@ public class ArticleService {
                     response.setStatus(String.valueOf(article.getStatus()));
                     response.setName(article.getName());
                     response.setUserId(article.getUser().getId());
-                    return response;
-                });
+                    return response;}).getContent();
     }
 
+    @Cacheable(
+            value = "approved-articles",
+            key = "#pageable.pageNumber + '-' + #pageable.pageSize")
     @Transactional(readOnly = true)
-    public Page<ArticleResponseForUsersDto> readApprovedArticles(Pageable pageable) {
+    public List<ArticleResponseForUsersDto> readApprovedArticles(Pageable pageable) {
         log.info("About fetching all approved articles");
         return articleRepo.findByStatus(Status.APPROVED, pageable)
-                .map(article -> modelMapper.map(article, ArticleResponseForUsersDto.class));
+                .map(article -> modelMapper.map(article, ArticleResponseForUsersDto.class)).getContent();
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "articles", allEntries = true),
+            @CacheEvict(value = "article", key = "#id")})
     @Transactional
     public String approveArticle(UUID id) {
         Article article = articleRepo.findById(id).
@@ -123,6 +137,7 @@ public class ArticleService {
         return "ARTICLE HAS BEEN REJECTED SUCCESSFULLY";
     }
 
+    @Cacheable(value = "article", key = "#id")
     @Transactional(readOnly = true)
     public ArticleResponseForUsersDto getArticleById(UUID id) {
         log.info("About to get article of id: {}",id);
@@ -135,6 +150,9 @@ public class ArticleService {
         return articleResponse;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "articles", allEntries = true),
+            @CacheEvict(value = "article", key = "#id")})
     @Transactional
     public ArticleResponseForUsersDto updateArticle(UUID id, @Valid ArticleRequestDto requestDto, User user) {
         log.info("About to update request with id: {} and user {}",id,user);
@@ -168,6 +186,9 @@ public class ArticleService {
         return updatedResponse;
     }
 
+    @Caching(evict = {
+            @CacheEvict(value = "articles", allEntries = true),
+            @CacheEvict(value = "article", key = "#id")})
     @Transactional
     public String deleteArticle(UUID id, User user) {
         log.info("About to delete article with id: {}",id);

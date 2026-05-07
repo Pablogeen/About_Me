@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -39,24 +40,24 @@ public class ArticleController {
 
     @GetMapping("/read-all-articles")
     @PreAuthorize("hasAuthority('ADMIN')")
-    public ResponseEntity<Page<ArticleResponseDto>> readAllArticles(
+    public ResponseEntity<List<ArticleResponseDto>> readAllArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
         log.info("Request made to read articles - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
-        Page<ArticleResponseDto> articles = articleService.readAllArticles(pageable);
-        log.info("{} articles", articles.getTotalElements());
+        List<ArticleResponseDto> articles = articleService.readAllArticles(pageable);
+        log.info("{} articles", articles.size());
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
     @GetMapping()
-    public ResponseEntity<Page<ArticleResponseForUsersDto>> readApprovedArticles(
+    public ResponseEntity<List<ArticleResponseForUsersDto>> readApprovedArticles(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size){
         log.info("Request made to read approved articles - page: {}, size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
-        Page<ArticleResponseForUsersDto> articles = articleService.readApprovedArticles(pageable);
-        log.info("Returning {} all approved articles", articles.getTotalElements());
+        List<ArticleResponseForUsersDto> articles = articleService.readApprovedArticles(pageable);
+        log.info("Returning {} all approved articles", articles.size());
         return new ResponseEntity<>(articles, HttpStatus.OK);
     }
 
