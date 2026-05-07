@@ -47,8 +47,8 @@ public class RateLimitConfig {
     public BucketConfiguration publicConfig() {
         return BucketConfiguration.builder()
                 .addLimit(limit -> limit
-                        .capacity(50)
-                        .refillGreedy(50, Duration.ofMinutes(1)))
+                        .capacity(60)
+                        .refillGreedy(60, Duration.ofMinutes(1)))
                 .build();
     }
 }
