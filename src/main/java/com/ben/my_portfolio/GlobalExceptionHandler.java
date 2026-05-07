@@ -85,7 +85,7 @@ public class GlobalExceptionHandler {
                 "INVALID CREDENTIALS",
                 request.getDescription(false),
                 LocalDateTime.now());
-        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(details, HttpStatus.UNAUTHORIZED);
 
     }
 
@@ -122,7 +122,7 @@ public class GlobalExceptionHandler {
                 "UNAUTHORIZED",
                 request.getDescription(false),
                 LocalDateTime.now());
-        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(details, HttpStatus.FORBIDDEN);
 
     }
 
