@@ -148,5 +148,22 @@ public class UserService {
                 .map(user -> modelMapper.map(user, UserResponse.class)).getContent();
     }
 
+    public void resendVerificationToken(String email) {
+        log.info("About to make cal to resend token");
+        User user = userRepo.findByEmail(email)
+                .orElseThrow(() -> new UserNotFoundException("EMAIL NOT FOUND"));
+
+        if(user.getIsVerified()){
+            log.info("User is already verified");
+            throw new AccountAlreadyVerifiedException("ACCOUNT ALREADY VERIFIED");
+        }
+
+       String token = tokenHelper.saveConfirmationToken(user);
+        log.info("ConfirmationToken has been saved in the db");
+
+        eventPublisher.publishEvent(new UserRegisteredEvent(user.getEmail(), token));
+        log.info("Event fired to resend verification token email");
+
+    }
 }
 
