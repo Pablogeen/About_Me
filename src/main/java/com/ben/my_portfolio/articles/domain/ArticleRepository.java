@@ -20,4 +20,6 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
 
     @EntityGraph(attributePaths = {"user"})
     Optional<Article> findById(UUID id);
+
+    Long countByStatus(Status status);
 }

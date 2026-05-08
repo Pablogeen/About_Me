@@ -1,5 +1,7 @@
 package com.ben.my_portfolio.users.domain;
 
+import com.ben.my_portfolio.articles.domain.ArticleResponseForUsersDto;
+import com.ben.my_portfolio.articles.domain.Status;
 import com.ben.my_portfolio.users.*;
 import com.ben.my_portfolio.users.security.JwtHelper;
 import jakarta.transaction.Transactional;
@@ -8,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.context.ApplicationEventPublisher;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -16,6 +19,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -137,23 +141,12 @@ public class UserService {
          userRepo.verifyUser(email);
     }
 
-    @Service
-    @RequiredArgsConstructor
-    public static class ConfirmationTokenService {
+    public List<UserResponse> getAllUsers(Pageable pageable) {
+        log.info("Call made to get all users");
 
-        private final ConfirmationTokenRepository tokenRepo;
-
-        public void saveConfirmationToken(ConfirmationToken confirmToken) {
-            tokenRepo.save(confirmToken);
-        }
-
-        public Optional<ConfirmationToken> getToken(String token) {
-            return tokenRepo.findByToken(token);
-        }
-
-        public int setConfirmationDetails(String token) {
-            return  tokenRepo.updateConfirmationDetails(token, LocalDateTime.now());
-        }
+        return userRepo.findAll(pageable)
+                .map(user -> modelMapper.map(user, UserResponse.class)).getContent();
     }
+
 }
 

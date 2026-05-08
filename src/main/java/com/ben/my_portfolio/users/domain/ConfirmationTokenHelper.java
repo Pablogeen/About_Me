@@ -13,7 +13,7 @@ import java.time.LocalDateTime;
 @RequiredArgsConstructor
 public class ConfirmationTokenHelper {
 
-    private final UserService.ConfirmationTokenService tokenService;
+    private final ConfirmationTokenService tokenService;
 
     public String saveConfirmationToken(User user)  {
 

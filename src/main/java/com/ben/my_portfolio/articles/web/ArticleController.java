@@ -8,7 +8,6 @@ import com.ben.my_portfolio.users.User;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -106,6 +105,49 @@ public class ArticleController {
         log.info("Article Deleted successfully");
         return new ResponseEntity<>(articleResponse, HttpStatus.NO_CONTENT);
     }
+
+
+
+    @GetMapping("/total-count")
+    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    public ResponseEntity<Long>getTotaArticles(){
+        log.info("About to get total number of articles");
+        Long totalArticles = articleService.getTotalArticles();
+        log.info("Total articles gotten : {}",totalArticles);
+        return new ResponseEntity<>(totalArticles, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/approved/count")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Long>getApprovedArticlesCount(){
+        log.info("About to get total number of articles");
+        Long totalArticles = articleService.getApprovedArticleCount();
+        log.info("Approved articles gotten : {}",totalArticles);
+        return new ResponseEntity<>(totalArticles, HttpStatus.OK);
+    }
+
+
+
+    @GetMapping("/rejected-count")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Long>getRejectedArticlesCount(){
+        log.info("About to get total number of rejected articles");
+        Long totalArticles = articleService.getRejectedArticlesCount();
+        log.info("Rejected articles gotten : {}",totalArticles);
+        return new ResponseEntity<>(totalArticles, HttpStatus.OK);
+    }
+
+    @GetMapping("/pending-count")
+    @PreAuthorize("hasAuthority('ADMIN')")
+    public ResponseEntity<Long>getPendingCount(){
+        log.info("About to get total number of approved articles");
+        Long totalArticles = articleService.getPendingArticlesCount();
+        log.info("Pending articles gotten : {}",totalArticles);
+        return new ResponseEntity<>(totalArticles, HttpStatus.OK);
+    }
+
+
 
 
 
