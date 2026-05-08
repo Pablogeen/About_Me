@@ -212,4 +212,24 @@ public class ArticleService {
 
         return "ARTICLE HAS BEEN DELETED SUCCESSFULLY";
     }
+
+    public Long getTotalArticles() {
+        log.info("Request made to get total articles count");
+        return articleRepo.count();
+    }
+
+    public Long getApprovedArticleCount() {
+        log.info("Request made to get approved articles count");
+        return articleRepo.countByStatus(Status.APPROVED);
+    }
+
+    public Long getRejectedArticlesCount() {
+        log.info("Request made to get rejected articles count");
+        return articleRepo.countByStatus(Status.REJECTED);
+    }
+
+    public Long getPendingArticlesCount() {
+        log.info("Request made to get pending articles count");
+        return articleRepo.countByStatus(Status.PENDING);
+    }
 }
