@@ -172,4 +172,16 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.TOO_MANY_REQUESTS);
     }
+
+
+    @ExceptionHandler(AccountAlreadyVerifiedException.class)
+    public ResponseEntity<?> acountAlreadytVerifiedException(AccountAlreadyVerifiedException ex, WebRequest request) {
+        log.error("Rate limit exception");
+        ErrorDetails details = new ErrorDetails(
+                ex.getMessage(),
+                "YOUR ACCOUNT HAS ALREADY BEEN VERIFIED",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.TOO_MANY_REQUESTS);
+    }
 }
