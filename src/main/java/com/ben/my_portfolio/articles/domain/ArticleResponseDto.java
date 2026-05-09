@@ -6,9 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.time.Instant;
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
@@ -21,7 +19,7 @@ public class ArticleResponseDto implements Serializable {
         private String about;
         private String status;
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-        private Instant createdAt;
+        private LocalDateTime createdAt;
         private Long userId;
 
         }

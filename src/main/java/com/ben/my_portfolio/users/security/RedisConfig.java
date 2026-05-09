@@ -1,5 +1,9 @@
 package com.ben.my_portfolio.users.security;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import io.github.bucket4j.distributed.ExpirationAfterWriteStrategy;
 import io.github.bucket4j.redis.lettuce.Bucket4jLettuce;
 import io.github.bucket4j.redis.lettuce.cas.LettuceBasedProxyManager;
@@ -74,31 +78,43 @@ public class RedisConfig {
     }
 
 
+    @Bean
+    public RedisCacheManager cacheManager(LettuceConnectionFactory factory) {
 
-        @Bean
-        public RedisCacheManager cacheManager(LettuceConnectionFactory factory) {
-            RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
-                    .defaultCacheConfig()
-                    .entryTtl(Duration.ofMinutes(10))
-                    .serializeKeysWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(new StringRedisSerializer()))
-                    .serializeValuesWith(
-                            RedisSerializationContext.SerializationPair
-                                    .fromSerializer(new GenericJackson2JsonRedisSerializer())
-                    )
-                    .disableCachingNullValues();
+        ObjectMapper redisObjectMapper = new ObjectMapper();
+        redisObjectMapper.registerModule(new JavaTimeModule());
+        redisObjectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        redisObjectMapper.configure(
+                DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+        redisObjectMapper.activateDefaultTyping(
+                redisObjectMapper.getPolymorphicTypeValidator(),
+                ObjectMapper.DefaultTyping.NON_FINAL
+        );
 
-            Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
-            cacheConfigs.put("articles",
-                    defaultConfig.entryTtl(Duration.ofMinutes(10)));
+        GenericJackson2JsonRedisSerializer serializer =
+                new GenericJackson2JsonRedisSerializer(redisObjectMapper);
 
-            cacheConfigs.put("article",
-                    defaultConfig.entryTtl(Duration.ofMinutes(30)));
+        RedisCacheConfiguration defaultConfig = RedisCacheConfiguration
+                .defaultCacheConfig()
+                .entryTtl(Duration.ofMinutes(10))
+                .serializeKeysWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(new StringRedisSerializer())
+                )
+                .serializeValuesWith(
+                        RedisSerializationContext.SerializationPair
+                                .fromSerializer(serializer)
+                )
+                .disableCachingNullValues();
 
-            return RedisCacheManager.builder(factory)
-                    .cacheDefaults(defaultConfig)
-                    .withInitialCacheConfigurations(cacheConfigs)
-                    .build();
-        }
+        Map<String, RedisCacheConfiguration> cacheConfigs = new HashMap<>();
+        cacheConfigs.put("articles", defaultConfig.entryTtl(Duration.ofMinutes(10)));
+        cacheConfigs.put("article", defaultConfig.entryTtl(Duration.ofMinutes(30)));
+        cacheConfigs.put("profile", defaultConfig.entryTtl(Duration.ofHours(1)));
+
+        return RedisCacheManager.builder(factory)
+                .cacheDefaults(defaultConfig)
+                .withInitialCacheConfigurations(cacheConfigs)
+                .build();
+    }
 }
