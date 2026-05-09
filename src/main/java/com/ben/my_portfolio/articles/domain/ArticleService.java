@@ -16,7 +16,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.Instant;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,7 +39,7 @@ public class ArticleService {
         log.info("Mapped request article to article entity: {}",article);
 
         article.setTitle(articleRequestDto.getTitle().toUpperCase());
-        article.setCreatedAt(Instant.now());
+        article.setCreatedAt(LocalDateTime.now());
         article.setStatus(Status.PENDING);
         article.setUser(user);
 
