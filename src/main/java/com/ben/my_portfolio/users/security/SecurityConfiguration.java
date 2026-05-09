@@ -16,7 +16,6 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.session.DisableEncodeUrlFilter;
 
 @Configuration
 @RequiredArgsConstructor
@@ -33,12 +32,12 @@ public class SecurityConfiguration {
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable);
         http.sessionManagement(session ->
-                session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED));
+                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(requests -> requests
-                .requestMatchers("/users/**", "/oauth2/**",
+                .requestMatchers("/users/sign-in", "/users/sign-up", "/users/confirm-account",
+                        "/users/resend-verfication", "/users/contact", "/oauth2/**",
                         "/login/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
-        http.addFilterBefore(rateLimitFilter, DisableEncodeUrlFilter.class);
          http.exceptionHandling(ex -> ex
                 .authenticationEntryPoint((request, response, authException) -> {
                     response.setContentType("application/json");
@@ -47,7 +46,9 @@ public class SecurityConfiguration {
                             "{\"error\": \"Unauthorized - Please provide a valid JWT token\"}");}));
                 http.oauth2Login(oauth2 -> oauth2
                 .successHandler(oAuth2SuccessHandler));
-              http.addFilterAfter(jwtFilter, RateLimitFilter.class);
+        http.addFilterBefore(rateLimitFilter, UsernamePasswordAuthenticationFilter.class);
+        http.addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class);
+
 
         return http.build();
     }

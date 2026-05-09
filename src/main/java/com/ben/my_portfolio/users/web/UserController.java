@@ -1,9 +1,9 @@
 package com.ben.my_portfolio.users.web;
 
-import com.ben.my_portfolio.users.User;
+import com.ben.my_portfolio.users.UserResponse;
+import com.ben.my_portfolio.users.domain.ContactMeRequest;
 import com.ben.my_portfolio.users.domain.LoginResponse;
 import com.ben.my_portfolio.users.domain.UserRequest;
-import com.ben.my_portfolio.users.UserResponse;
 import com.ben.my_portfolio.users.domain.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +13,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -71,5 +70,11 @@ public class UserController {
 
     }
 
+    @PostMapping("/contact")
+    public ResponseEntity<String> contactAdmin(@Valid @RequestBody ContactMeRequest request) {
+        log.info("About to contact the admin");
+        String result =userService.sendContactEmail(request);
+        return new ResponseEntity<>(result, HttpStatus.OK);
+    }
 
 }
