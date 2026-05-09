@@ -5,6 +5,7 @@ package com.ben.my_portfolio.notification.domain;
         CONTRIBUTION,
         ADMIN_NOTIFICATION,
         ARTICLE_APPROVED,
-        ARTICLE_REJECTED
+        ARTICLE_REJECTED,
+        CONTACT_ME
     }
 

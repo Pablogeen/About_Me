@@ -109,7 +109,7 @@ public class ArticleController {
 
 
     @GetMapping("/total-count")
-    @PreAuthorize("hasAnyAuthority('ADMIN')")
+    @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Long>getTotaArticles(){
         log.info("About to get total number of articles");
         Long totalArticles = articleService.getTotalArticles();
@@ -118,10 +118,10 @@ public class ArticleController {
     }
 
 
-    @GetMapping("/approved/count")
+    @GetMapping("/approved-count")
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Long>getApprovedArticlesCount(){
-        log.info("About to get total number of articles");
+        log.info("About to get approved number of articles");
         Long totalArticles = articleService.getApprovedArticleCount();
         log.info("Approved articles gotten : {}",totalArticles);
         return new ResponseEntity<>(totalArticles, HttpStatus.OK);

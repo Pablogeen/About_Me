@@ -1,7 +1,5 @@
 package com.ben.my_portfolio.users.domain;
 
-import com.ben.my_portfolio.articles.domain.ArticleResponseForUsersDto;
-import com.ben.my_portfolio.articles.domain.Status;
 import com.ben.my_portfolio.users.*;
 import com.ben.my_portfolio.users.security.JwtHelper;
 import jakarta.transaction.Transactional;
@@ -20,7 +18,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @Slf4j
@@ -164,6 +161,14 @@ public class UserService {
         eventPublisher.publishEvent(new UserRegisteredEvent(user.getEmail(), token));
         log.info("Event fired to resend verification token email");
 
+    }
+
+    public String sendContactEmail(@Valid ContactMeRequest request) {
+        log.info("Request to contact me: {}",request.getEmail());
+        eventPublisher.publishEvent(
+                new ContactMeRequestEvent(request.getEmail(),request.getPhoneNumber(), request.getReasonForContact(), request.getMessage()));
+        log.info("Event has been published sent");
+        return "CONTACT REQUEST SENT SUCCESSFULLY";
     }
 }
 

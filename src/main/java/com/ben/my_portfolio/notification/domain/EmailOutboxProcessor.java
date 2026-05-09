@@ -22,11 +22,13 @@ public class EmailOutboxProcessor {
     public void process() {
         List<EmailOutbox> pending = outboxRepository
                                     .findByStatus(EmailStatus.PENDING);
+        log.info("Pending Emails: {}",pending);
 
         for (EmailOutbox outbox : pending) {
             try {
                 String html = buildHtml(outbox);
                 emailSender.sendEmail(outbox.getRecipient(), outbox.getSubject(), html);
+                log.info("Email sent to :{}",outbox.getRecipient());
                 outbox.markSent();
                 log.info("Email sent successfully to {} [type={}]", outbox.getRecipient(), outbox.getEmailType());
             } catch (Exception e) {
@@ -39,6 +41,7 @@ public class EmailOutboxProcessor {
     }
 
     private String buildHtml(EmailOutbox outbox) {
+
         return switch (outbox.getEmailType()) {
             case VERIFICATION ->
                     emailBuilder.buildVerificationEmailHtml(outbox.getReference());
@@ -52,6 +55,10 @@ public class EmailOutboxProcessor {
                     emailBuilder.buildArticleApprovedEmailHtml(outbox.getReference());
             case ARTICLE_REJECTED ->
                     emailBuilder.buildArticleRejectedEmailHtml(outbox.getReference());
+            case CONTACT_ME -> {
+                String[] parts = outbox.getReference().split("\\|");
+                yield emailBuilder.buildContactRequestEmail(parts[0], parts[1], parts[2],parts[3]);
+            }
         };
     }
 

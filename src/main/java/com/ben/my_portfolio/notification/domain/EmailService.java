@@ -4,7 +4,9 @@ package com.ben.my_portfolio.notification.domain;
 import com.ben.my_portfolio.articles.ArticleContributedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
+import com.ben.my_portfolio.users.ContactMeRequestEvent;
 import com.ben.my_portfolio.users.UserRegisteredEvent;
+import com.ben.my_portfolio.users.domain.ContactMeRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
@@ -70,6 +72,18 @@ public class EmailService {
                 event.articleTitle()));
 
     }
+
+    @ApplicationModuleListener
+    public void contactMe(ContactMeRequestEvent event) {
+        outboxRepository.save(new EmailOutbox(
+                adminEmail,
+                "CONTACT ME— BEN & CO",
+                EmailType.CONTACT_ME,
+                event.email() + "|" +event.phoneNumber() + "|" + event.reasonForContact() + "|" + event.message()));
+
+    }
+
+
 
 
 

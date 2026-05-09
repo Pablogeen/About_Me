@@ -4,7 +4,6 @@ import com.ben.my_portfolio.articles.ArticleContributedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
 import com.ben.my_portfolio.users.User;
-
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,12 +12,11 @@ import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.annotation.Caching;
 import org.springframework.context.ApplicationEventPublisher;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +39,7 @@ public class ArticleService {
         log.info("Mapped request article to article entity: {}",article);
 
         article.setTitle(articleRequestDto.getTitle().toUpperCase());
-        article.setCreatedAt(LocalDateTime.now());
+        article.setCreatedAt(Instant.now());
         article.setStatus(Status.PENDING);
         article.setUser(user);
 
@@ -120,7 +118,7 @@ public class ArticleService {
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("A check has been made if article with id {} is in the db:",id);
 
-        if(!Status.REJECTED.equals(article.getStatus())){
+        if(!Status.PENDING.equals(article.getStatus())){
             log.info("Article been inspected. Status: {}",article.getStatus());
             throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
         }
@@ -132,7 +130,7 @@ public class ArticleService {
         log.info("Status has been saved");
 
         eventPublisher.publishEvent(new ArticleReviewedRejectedEvent(article.getUser().getEmail(), article.getTitle()));
-        log.info("Email sent successfully");
+        log.info("Email sent ");
 
         return "ARTICLE HAS BEEN REJECTED SUCCESSFULLY";
     }

@@ -526,6 +526,282 @@ public class EmailBuilder {
                 """.formatted(articleTitle);
     }
 
+    public String buildContactRequestEmail(
+            String email, String phoneNumber, String reasonForContact, String message) {
+        return """
+        <!DOCTYPE html>
+        <html lang="en">
+        <head>
+            <meta charset="UTF-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1.0">
+            <title>New Contact Request - BEN & CO</title>
+        </head>
+
+        <body style="margin:0; padding:0; background:#161616; font-family:Arial, Helvetica, sans-serif;">
+
+        <table width="100%%" border="0" cellspacing="0" cellpadding="0"
+               style="padding:40px 0; background:#161616;">
+            <tr>
+                <td align="center">
+
+                    <table width="700" border="0" cellspacing="0" cellpadding="0"
+                           style="background:#050505; border:1px solid #1d1d1d;">
+
+                        <!-- HEADER -->
+                        <tr>
+                            <td
+                                style="
+                                    background:linear-gradient(to right, #5e832f, #314d16);
+                                    padding:55px 20px;
+                                    text-align:center;
+                                "
+                            >
+
+                                <h1
+                                    style="
+                                        margin:0;
+                                        color:#eadfc7;
+                                        font-size:30px;
+                                        letter-spacing:8px;
+                                        font-family:Georgia, serif;
+                                        font-weight:bold;
+                                    "
+                                >
+                                    BEN & CO
+                                </h1>
+
+                            </td>
+                        </tr>
+
+                        <!-- BODY -->
+                        <tr>
+                            <td style="padding:60px 60px 45px 60px;">
+
+                                <h2
+                                    style="
+                                        margin-top:0;
+                                        margin-bottom:35px;
+                                        color:#f2ead8;
+                                        font-size:26px;
+                                        font-family:Georgia, serif;
+                                    "
+                                >
+                                    Hello Admin,
+                                </h2>
+
+                                <p
+                                    style="
+                                        color:#a9a39b;
+                                        font-size:18px;
+                                        line-height:1.9;
+                                        margin-bottom:30px;
+                                    "
+                                >
+                                    We have received a new contact request through the
+                                    <span style="color:#d9c27c; font-weight:bold;">
+                                        BEN & CO
+                                    </span>
+                                    platform. The user has submitted the following details
+                                    for your review.
+                                </p>
+
+                                <!-- DIVIDER -->
+                                <div style="border-top:1px solid #2a2a2a; margin:45px 0;"></div>
+
+                                <!-- SECTION TITLE -->
+                                <p
+                                    style="
+                                        color:#8f8f8f;
+                                        letter-spacing:5px;
+                                        font-size:12px;
+                                        margin-bottom:20px;
+                                    "
+                                >
+                                    CONTACT REQUEST
+                                </p>
+
+                                <!-- EMAIL -->
+                                <table width="100%%" border="0" cellspacing="0" cellpadding="0"
+                                       style="
+                                            background:#111111;
+                                            margin-bottom:18px;
+                                            border-left:4px solid #5e832f;
+                                       ">
+                                    <tr>
+                                        <td style="padding:22px 25px;">
+
+                                            <p style="margin:0; color:#8f8f8f; font-size:12px;">
+                                                USER EMAIL
+                                            </p>
+
+                                            <p
+                                                style="
+                                                    margin:10px 0 0 0;
+                                                    color:#ffffff;
+                                                    font-size:21px;
+                                                    font-style:italic;
+                                                "
+                                            >
+                                                %s
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- PHONE -->
+                                <table width="100%%" border="0" cellspacing="0" cellpadding="0"
+                                       style="
+                                            background:#111111;
+                                            margin-bottom:18px;
+                                            border-left:4px solid #5e832f;
+                                       ">
+                                    <tr>
+                                        <td style="padding:22px 25px;">
+
+                                            <p style="margin:0; color:#8f8f8f; font-size:12px;">
+                                                PHONE NUMBER
+                                            </p>
+
+                                            <p
+                                                style="
+                                                    margin:10px 0 0 0;
+                                                    color:#ffffff;
+                                                    font-size:21px;
+                                                    font-style:italic;
+                                                "
+                                            >
+                                                %s
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- REASON -->
+                                <table width="100%%" border="0" cellspacing="0" cellpadding="0"
+                                       style="
+                                            background:#111111;
+                                            margin-bottom:35px;
+                                            border-left:4px solid #5e832f;
+                                       ">
+                                    <tr>
+                                        <td style="padding:22px 25px;">
+
+                                            <p style="margin:0; color:#8f8f8f; font-size:12px;">
+                                                REASON FOR CONTACT
+                                            </p>
+
+                                            <p
+                                                style="
+                                                    margin:10px 0 0 0;
+                                                    color:#ffffff;
+                                                    font-size:21px;
+                                                    font-style:italic;
+                                                    text-transform:uppercase;
+                                                "
+                                            >
+                                                %s
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <!-- MESSAGE TITLE -->
+                                <p
+                                    style="
+                                        color:#8f8f8f;
+                                        letter-spacing:5px;
+                                        font-size:12px;
+                                        margin-bottom:20px;
+                                    "
+                                >
+                                    MESSAGE
+                                </p>
+
+                                <!-- MESSAGE BOX -->
+                                <table width="100%%" border="0" cellspacing="0" cellpadding="0"
+                                       style="
+                                            background:#111111;
+                                            border-left:4px solid #5e832f;
+                                            margin-bottom:40px;
+                                       ">
+                                    <tr>
+                                        <td style="padding:28px 25px;">
+
+                                            <p
+                                                style="
+                                                    margin:0;
+                                                    color:#c2c2c2;
+                                                    font-size:18px;
+                                                    line-height:1.9;
+                                                "
+                                            >
+                                                %s
+                                            </p>
+
+                                        </td>
+                                    </tr>
+                                </table>
+
+                                <p
+                                    style="
+                                        color:#a8a8a8;
+                                        font-size:18px;
+                                        line-height:1.9;
+                                        margin-bottom:40px;
+                                    "
+                                >
+                                    Keep up the excellent work. A prompt response to the
+                                    user is recommended for better engagement.
+                                </p>
+
+                                <!-- FOOTER DIVIDER -->
+                                <div style="border-top:1px solid #2a2a2a; margin-bottom:35px;"></div>
+
+                                <!-- FOOTER -->
+                                <p
+                                    style="
+                                        text-align:center;
+                                        color:#8e8e8e;
+                                        font-size:15px;
+                                        margin-bottom:10px;
+                                    "
+                                >
+                                    © 2026
+                                    <span style="color:#d8c178; font-weight:bold;">
+                                        BEN & CO
+                                    </span>.
+                                    All rights reserved.
+                                </p>
+
+                                <p
+                                    style="
+                                        text-align:center;
+                                        color:#b1b1b1;
+                                        font-size:14px;
+                                        font-style:italic;
+                                        margin:0;
+                                    "
+                                >
+                                    This is an automated email. Please do not reply to this message.
+                                </p>
+
+                            </td>
+                        </tr>
+
+                    </table>
+
+                </td>
+            </tr>
+        </table>
+
+        </body>
+        </html>
+        """.formatted(email, phoneNumber, reasonForContact, message);
+    }
+
 
 
 }
