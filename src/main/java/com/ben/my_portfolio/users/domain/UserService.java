@@ -145,7 +145,8 @@ public class UserService {
                 .map(user -> modelMapper.map(user, UserResponse.class)).getContent();
     }
 
-    public void resendVerificationToken(String email) {
+    @Transactional
+    public String resendVerificationToken(String email) {
         log.info("About to make cal to resend token");
         User user = userRepo.findByEmail(email)
                 .orElseThrow(() -> new UserNotFoundException("EMAIL NOT FOUND"));
@@ -161,14 +162,20 @@ public class UserService {
         eventPublisher.publishEvent(new UserRegisteredEvent(user.getEmail(), token));
         log.info("Event fired to resend verification token email");
 
+        return "Email Sent";
+
     }
 
+    @Transactional
     public String sendContactEmail(@Valid ContactMeRequest request) {
-        log.info("Request to contact me: {}",request.getEmail());
+        log.info("Publishing contact me event for: {}", request.getEmail());
+
         eventPublisher.publishEvent(
-                new ContactMeRequestEvent(request.getEmail(),request.getPhoneNumber(), request.getReasonForContact(), request.getMessage()));
-        log.info("Event has been published sent");
+                new ContactMeRequestEvent(request.getEmail(), request.getPhoneNumber(), request.getReasonForContact(), request.getMessage()));
+
+        log.info("Contact me event published successfully");
         return "CONTACT REQUEST SENT SUCCESSFULLY";
+
     }
 }
 

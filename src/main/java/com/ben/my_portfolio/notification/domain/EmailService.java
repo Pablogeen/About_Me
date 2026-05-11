@@ -6,10 +6,9 @@ import com.ben.my_portfolio.articles.ArticleReviewedApprovedEvent;
 import com.ben.my_portfolio.articles.ArticleReviewedRejectedEvent;
 import com.ben.my_portfolio.users.ContactMeRequestEvent;
 import com.ben.my_portfolio.users.UserRegisteredEvent;
-import com.ben.my_portfolio.users.domain.ContactMeRequest;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.modulith.events.ApplicationModuleListener;
 import org.springframework.stereotype.Service;
 
@@ -30,7 +29,6 @@ public class EmailService {
                 "Verify Your Email — BEN & CO",
                 EmailType.VERIFICATION,
                 event.token()));
-
     }
 
     @ApplicationModuleListener
@@ -40,7 +38,6 @@ public class EmailService {
                 "Thank You for Your Contribution — BEN & CO",
                 EmailType.CONTRIBUTION,
                 event.articleTitle()));
-
     }
 
     @ApplicationModuleListener
@@ -50,7 +47,6 @@ public class EmailService {
                 "New Article Submission — BEN & CO",
                 EmailType.ADMIN_NOTIFICATION,
                 event.articleTitle() + "|" + event.email()));
-
     }
 
     @ApplicationModuleListener
@@ -60,7 +56,6 @@ public class EmailService {
                 "Your Article Has Been Approved — BEN & CO",
                 EmailType.ARTICLE_APPROVED,
                 event.articleTitle()));
-
     }
 
     @ApplicationModuleListener
@@ -70,24 +65,22 @@ public class EmailService {
                 "Regarding Your Article Submission — BEN & CO",
                 EmailType.ARTICLE_REJECTED,
                 event.articleTitle()));
-
     }
 
     @ApplicationModuleListener
     public void contactMe(ContactMeRequestEvent event) {
-        outboxRepository.save(new EmailOutbox(
-                adminEmail,
-                "CONTACT ME— BEN & CO",
-                EmailType.CONTACT_ME,
-                event.email() + "|" +event.phoneNumber() + "|" + event.reasonForContact() + "|" + event.message()));
 
-    }
+            String reference = event.email() + "|" +
+                    event.phoneNumber() + "|" +
+                    event.reasonForContact() + "|" +
+                    event.message();
 
+            outboxRepository.save(new EmailOutbox(
+                    adminEmail,
+                    "CONTACT ME — BEN & CO",
+                    EmailType.CONTACT_ME,
+                    reference));
 
-
-
-
-
-
-
+            log.info("Contact me outbox saved successfully");
+        }
 }
