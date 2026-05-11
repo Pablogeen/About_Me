@@ -76,9 +76,7 @@ public class ArticleService {
                     return response;}).getContent();
     }
 
-    @Cacheable(
-            value = "approved-articles",
-            key = "#pageable.pageNumber + '-' + #pageable.pageSize")
+
     @Transactional(readOnly = true)
     public List<ArticleResponseForUsersDto> readApprovedArticles(Pageable pageable) {
         log.info("About fetching all approved articles");
