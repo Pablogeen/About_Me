@@ -35,7 +35,7 @@ public class SecurityConfiguration {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/users/sign-in", "/users/sign-up", "/users/confirm-account",
-                        "/users/resend-verfication", "/users/contact", "/oauth2/**",
+                        "/users/resend-verification", "/users/contact", "/oauth2/**",
                         "/login/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
          http.exceptionHandling(ex -> ex

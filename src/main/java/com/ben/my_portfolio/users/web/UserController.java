@@ -62,11 +62,11 @@ public class UserController {
 
     }
 
-    @GetMapping("/resend-verfication")
-    public ResponseEntity<Void> resendVerificationToken(@RequestParam String email){
+    @GetMapping("/resend-verification")
+    public ResponseEntity<String> resendVerificationToken(@RequestParam String email){
         log.info("Request made to resendVerificationToken: {}",email);
-        userService.resendVerificationToken(email);
-        return ResponseEntity.ok().build();
+      String response =  userService.resendVerificationToken(email);
+        return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
 
