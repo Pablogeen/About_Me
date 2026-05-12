@@ -1,6 +1,6 @@
 package com.ben.my_portfolio.articles.domain;
 
-public enum Status {
+public enum ArticleStatus {
     PENDING,
     APPROVED,
     REJECTED

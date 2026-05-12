@@ -40,7 +40,7 @@ public class ArticleService {
 
         article.setTitle(articleRequestDto.getTitle().toUpperCase());
         article.setCreatedAt(LocalDateTime.now());
-        article.setStatus(Status.PENDING);
+        article.setStatus(ArticleStatus.PENDING);
         article.setUser(user);
 
         articleRepo.save(article);
@@ -80,7 +80,7 @@ public class ArticleService {
     @Transactional(readOnly = true)
     public List<ArticleResponseForUsersDto> readApprovedArticles(Pageable pageable) {
         log.info("About fetching all approved articles");
-        return articleRepo.findByStatus(Status.APPROVED, pageable)
+        return articleRepo.findByStatus(ArticleStatus.APPROVED, pageable)
                 .map(article -> modelMapper.map(article, ArticleResponseForUsersDto.class)).getContent();
     }
 
@@ -93,12 +93,12 @@ public class ArticleService {
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("Article with id exist {}:",id);
 
-        if(!Status.PENDING.equals(article.getStatus())){
+        if(!ArticleStatus.PENDING.equals(article.getStatus())){
             log.info("Article has already been inspected. Status: {}",article.getStatus());
             throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
         }
 
-        article.setStatus(Status.APPROVED);
+        article.setStatus(ArticleStatus.APPROVED);
         log.info("Status set to approved");
 
         articleRepo.save(article);
@@ -116,12 +116,12 @@ public class ArticleService {
                 orElseThrow(() -> new ArticleNotFoundException("ARTICLE NOT FOUND"));
         log.info("A check has been made if article with id {} is in the db:",id);
 
-        if(!Status.PENDING.equals(article.getStatus())){
+        if(!ArticleStatus.PENDING.equals(article.getStatus())){
             log.info("Article been inspected. Status: {}",article.getStatus());
             throw new ArticleAlreadyInspectedException("ARTICLE HAS ALREADY BEEN INSPECTED");
         }
 
-        article.setStatus(Status.REJECTED);
+        article.setStatus(ArticleStatus.REJECTED);
         log.info("Status set to rejected");
 
         articleRepo.save(article);
@@ -209,23 +209,23 @@ public class ArticleService {
         return "ARTICLE HAS BEEN DELETED SUCCESSFULLY";
     }
 
-    public Long getTotalArticles() {
+    public Long getTotalArticlesCount() {
         log.info("Request made to get total articles count");
         return articleRepo.count();
     }
 
     public Long getApprovedArticleCount() {
         log.info("Request made to get approved articles count");
-        return articleRepo.countByStatus(Status.APPROVED);
+        return articleRepo.countByStatus(ArticleStatus.APPROVED);
     }
 
     public Long getRejectedArticlesCount() {
         log.info("Request made to get rejected articles count");
-        return articleRepo.countByStatus(Status.REJECTED);
+        return articleRepo.countByStatus(ArticleStatus.REJECTED);
     }
 
     public Long getPendingArticlesCount() {
         log.info("Request made to get pending articles count");
-        return articleRepo.countByStatus(Status.PENDING);
+        return articleRepo.countByStatus(ArticleStatus.PENDING);
     }
 }

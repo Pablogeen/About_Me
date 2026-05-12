@@ -112,7 +112,7 @@ public class ArticleController {
     @PreAuthorize("hasAuthority('ADMIN')")
     public ResponseEntity<Long>getTotaArticles(){
         log.info("About to get total number of articles");
-        Long totalArticles = articleService.getTotalArticles();
+        Long totalArticles = articleService.getTotalArticlesCount();
         log.info("Total articles gotten : {}",totalArticles);
         return new ResponseEntity<>(totalArticles, HttpStatus.OK);
     }

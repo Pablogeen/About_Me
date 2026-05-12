@@ -6,6 +6,10 @@ import com.ben.my_portfolio.users.domain.LoginResponse;
 import com.ben.my_portfolio.users.domain.UserRequest;
 import com.ben.my_portfolio.users.domain.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Pattern;
+import jakarta.validation.constraints.Size;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
@@ -42,7 +46,9 @@ public class UserController {
     }
 
     @GetMapping("/confirm-account")
-    public ResponseEntity<String>confirmAccount(@RequestParam String token){
+    public ResponseEntity<String>confirmAccount(@RequestParam  @NotBlank(message = "Token cannot be blank")
+                                                    @Size(max = 256, message = "Invalid token")
+                                                    @Pattern(regexp = "^[a-zA-Z0-9\\-]+$", message = "Invalid token format")String token){
         log.info("Call made to confirmAccount:");
        String confirmedAccount = userService.confirmAccount(token);
        log.info("Account has been verified");
@@ -63,7 +69,9 @@ public class UserController {
     }
 
     @GetMapping("/resend-verification")
-    public ResponseEntity<String> resendVerificationToken(@RequestParam String email){
+    public ResponseEntity<String> resendVerificationToken(@RequestParam  @NotBlank(message = "Email cannot be blank")
+                                                              @Email(message = "Invalid email format")
+                                                              @Size(max = 254, message = "Email too long")String email){
         log.info("Request made to resendVerificationToken: {}",email);
       String response =  userService.resendVerificationToken(email);
         return new ResponseEntity<>(response, HttpStatus.OK);

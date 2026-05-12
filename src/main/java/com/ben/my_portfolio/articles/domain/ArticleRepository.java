@@ -16,10 +16,10 @@ public interface ArticleRepository extends JpaRepository<Article, UUID> {
     @EntityGraph(attributePaths = {"user"})
     Page<Article> findAll(Pageable pageable);
 
-    Page<Article> findByStatus(@Param("status") Status status, Pageable pageable);
+    Page<Article> findByStatus(@Param("status") ArticleStatus status, Pageable pageable);
 
     @EntityGraph(attributePaths = {"user"})
     Optional<Article> findById(UUID id);
 
-    Long countByStatus(Status status);
+    Long countByStatus(ArticleStatus status);
 }

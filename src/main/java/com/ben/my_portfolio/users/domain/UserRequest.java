@@ -14,4 +14,7 @@ public class UserRequest {
     @NotBlank(message = "Password is required")
     private String password;
 
+    @NotBlank(message = "Password is required")
+    private String confirmPassword;
+
 }

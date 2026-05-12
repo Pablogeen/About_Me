@@ -184,4 +184,15 @@ public class GlobalExceptionHandler {
                 LocalDateTime.now());
         return new ResponseEntity<>(details, HttpStatus.TOO_MANY_REQUESTS);
     }
+
+    @ExceptionHandler(PasswordMismatchedException.class)
+    public ResponseEntity<?> passwordMismatchedException(PasswordMismatchedException ex, WebRequest request) {
+        log.error("Password mismatched Exception");
+        ErrorDetails details = new ErrorDetails(
+                ex.getMessage(),
+                "PASSWORD MISMATCH",
+                request.getDescription(false),
+                LocalDateTime.now());
+        return new ResponseEntity<>(details, HttpStatus.CONFLICT);
+    }
 }
