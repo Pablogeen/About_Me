@@ -46,6 +46,10 @@ public class UserService {
             throw new EmailAlreadyExistException("EMAIL ALREADY TAKEN");
         }
 
+        if(!registerRequest.getPassword().equals(registerRequest.getConfirmPassword())){
+            throw new PasswordMismatchedException("PASSWORD MISMATCHED");
+        }
+
         User mappedUser = modelMapper.map(registerRequest, User.class);
         log.info("Mapped user into entity");
 
