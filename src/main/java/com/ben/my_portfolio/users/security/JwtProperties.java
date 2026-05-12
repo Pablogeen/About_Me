@@ -6,6 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 
 @ConfigurationProperties(prefix = "app.jwt")
 @Getter
+@Setter
 public class JwtProperties {
 
     private String secret;
