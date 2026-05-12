@@ -1,0 +1,1 @@
+CREATE INDEX idx_article_id ON article(id);

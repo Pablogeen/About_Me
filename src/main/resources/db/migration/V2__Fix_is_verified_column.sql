@@ -1,0 +1,2 @@
+ALTER TABLE user
+    MODIFY COLUMN is_verified TINYINT(1);
