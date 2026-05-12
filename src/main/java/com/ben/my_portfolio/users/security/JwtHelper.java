@@ -1,6 +1,5 @@
 package com.ben.my_portfolio.users.security;
 
-import com.ben.my_portfolio.users.domain.Constants;
 import com.ben.my_portfolio.users.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,13 +16,14 @@ public class JwtHelper {
 
     private final JwtEncoder encoder;
     private final JwtDecoder decoder;
+    private final JwtProperties jwtProperties;
 
 
     public JwtToken generateToken(User user) {
         Instant now = Instant.now();
-        Instant expiresAt = now.plusSeconds(Constants.ACCESS_TOKEN_EXPIRY);
+        Instant expiresAt = now.plusSeconds(jwtProperties.getAccessTokenExpiry());
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(Constants.JWT_ISSUER)
+                .issuer(jwtProperties.getIssuer())
                 .issuedAt(now)
                 .expiresAt(expiresAt)
                 .subject(user.getEmail())
@@ -37,7 +37,6 @@ public class JwtHelper {
         return new JwtToken(token, expiresAt);
     }
 
-    // Add these validation methods
     public String extractUsername(String token) {
         try {
             var jwt = decoder.decode(token);

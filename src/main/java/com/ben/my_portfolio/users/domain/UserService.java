@@ -74,7 +74,7 @@ public class UserService {
     public LoginResponse loginUser(@Valid UserRequest loginRequest) {
 
         var user = userRepo.findByEmail(loginRequest.getEmail())
-                .orElseThrow(() -> new InvalidCredentialsException("INVALID CREDENTIALS"));
+                .orElseThrow(() -> new UserNotFoundException("EMAIL NOT FOUND"));
         log.info("Login attempt for user: {}", loginRequest.getEmail());
 
         if (!Boolean.TRUE.equals(user.getIsVerified())) {
@@ -92,6 +92,7 @@ public class UserService {
         }
     }
 
+    @Transactional
     public UserResponse getUserById(Long id) {
         log.info("Getting user with id: {}",id);
         User user = userRepo.findById(id).
@@ -111,6 +112,7 @@ public class UserService {
     }
 
 
+    @Transactional
     public String confirmAccount(String token) {
         log.info("About to confirm token:");
         ConfirmationToken confirmToken = tokenService.getToken(token)
