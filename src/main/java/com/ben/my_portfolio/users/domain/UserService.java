@@ -75,7 +75,7 @@ public class UserService {
         return userResponse;
     }
 
-    public LoginResponse loginUser(@Valid UserRequest loginRequest) {
+    public LoginResponse loginUser(@Valid UserLoginRequest loginRequest) {
 
         var user = userRepo.findByEmail(loginRequest.getEmail())
                 .orElseThrow(() -> new UserNotFoundException("EMAIL NOT FOUND"));
