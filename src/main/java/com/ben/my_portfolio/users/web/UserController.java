@@ -1,10 +1,7 @@
 package com.ben.my_portfolio.users.web;
 
 import com.ben.my_portfolio.users.UserResponse;
-import com.ben.my_portfolio.users.domain.ContactMeRequest;
-import com.ben.my_portfolio.users.domain.LoginResponse;
-import com.ben.my_portfolio.users.domain.UserRequest;
-import com.ben.my_portfolio.users.domain.UserService;
+import com.ben.my_portfolio.users.domain.*;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -38,7 +35,7 @@ public class UserController {
     }
 
     @PostMapping("/sign-in")
-    public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid UserRequest loginRequest){
+    public ResponseEntity<LoginResponse> loginUser(@RequestBody @Valid UserLoginRequest loginRequest){
         log.info("Call made to login in a user: {}",loginRequest.getEmail());
         LoginResponse loggedInUser = userService.loginUser(loginRequest);
         log.info("User logged in successfully: ");
