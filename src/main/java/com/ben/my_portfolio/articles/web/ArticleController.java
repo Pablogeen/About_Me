@@ -23,7 +23,7 @@ import java.util.UUID;
 
 @Tag(name = "Articles", description = "Endpoints for managing articles")
 @RestController
-@RequestMapping("/articles")
+@RequestMapping("/v1/articles")
 @Slf4j
 @RequiredArgsConstructor
 public class ArticleController {
