@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@Tag(name = "Articles", description = "Endpoints for managing articles")
+@Tag(name = "Users", description = "Endpoints for managing users")
 @RequestMapping("/v1/users")
 @RestController
 @Slf4j
