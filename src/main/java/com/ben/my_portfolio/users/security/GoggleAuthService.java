@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 public class GoggleAuthService {
 
     private final UserRepository userRepository;
-    private final JwtHelper jwtHelper;
 
     public User findOrCreateGoogleUser(String email) {
         return userRepository.findByEmail(email)

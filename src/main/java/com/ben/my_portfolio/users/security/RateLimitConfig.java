@@ -9,7 +9,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import java.time.Duration;
 
 @Configuration
-@RequiredArgsConstructor
 public class RateLimitConfig {
 
     public BucketConfiguration signInConfig() {
