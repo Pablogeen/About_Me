@@ -2,6 +2,7 @@ package com.ben.my_portfolio.users.web;
 
 import com.ben.my_portfolio.users.UserResponse;
 import com.ben.my_portfolio.users.domain.*;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -18,7 +19,8 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@RequestMapping("/users")
+@Tag(name = "Articles", description = "Endpoints for managing articles")
+@RequestMapping("/v1/users")
 @RestController
 @Slf4j
 @RequiredArgsConstructor
@@ -81,5 +83,7 @@ public class UserController {
         String result =userService.sendContactEmail(request);
         return new ResponseEntity<>(result, HttpStatus.OK);
     }
+
+
 
 }

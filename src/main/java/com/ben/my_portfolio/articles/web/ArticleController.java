@@ -5,6 +5,7 @@ import com.ben.my_portfolio.articles.domain.ArticleResponseDto;
 import com.ben.my_portfolio.articles.domain.ArticleResponseForUsersDto;
 import com.ben.my_portfolio.articles.domain.ArticleService;
 import com.ben.my_portfolio.users.User;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,8 +20,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+
+@Tag(name = "Articles", description = "Endpoints for managing articles")
 @RestController
-@RequestMapping("/articles")
+@RequestMapping("/v1/articles")
 @Slf4j
 @RequiredArgsConstructor
 public class ArticleController {

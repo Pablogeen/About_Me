@@ -23,7 +23,7 @@ public class JwtHelper {
         Instant now = Instant.now();
         Instant expiresAt = now.plusSeconds(jwtProperties.getAccessTokenExpiry());
         JwtClaimsSet claims = JwtClaimsSet.builder()
-                .issuer(jwtProperties.getIssuer())
+                .claim("issuer", jwtProperties.getIssuer())
                 .issuedAt(now)
                 .expiresAt(expiresAt)
                 .subject(user.getEmail())

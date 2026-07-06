@@ -36,6 +36,7 @@ public class SecurityConfiguration {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/users/sign-in", "/users/sign-up", "/users/confirm-account",
                         "/users/resend-verification", "/users/contact", "/oauth2/**",
+                        "/swagger-ui/**", "/v3/api-docs/**", "/swagger-ui.html",
                         "/login/oauth2/**", "/articles", "/articles/{id}")
                 .permitAll().anyRequest().authenticated());
          http.exceptionHandling(ex -> ex

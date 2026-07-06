@@ -2,6 +2,12 @@ package com.ben.my_portfolio;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import io.swagger.v3.oas.models.OpenAPI;
+import io.swagger.v3.oas.models.info.Contact;
+import io.swagger.v3.oas.models.info.Info;
+import io.swagger.v3.oas.models.info.License;
+import io.swagger.v3.oas.models.security.SecurityRequirement;
+import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.boot.autoconfigure.jackson.Jackson2ObjectMapperBuilderCustomizer;
@@ -32,5 +38,36 @@ public class AppConfiguration {
             builder.featuresToDisable(
                     SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         };
+    }
+
+    @Bean
+    public OpenAPI customOpenAPI() {
+
+        final String securitySchemeName = "bearerAuth";
+
+        return new OpenAPI()
+                .info(new Info()
+                        .title("My Portfolio API")
+                        .version("1.0")
+                        .description("Documentation for My Portfolio backend APIs")
+                        .contact(new Contact()
+                                .name("BEN & CO")
+                                .email("tettehbernard283@gmail.com"))
+                        .license(new License()
+                                .name("Apache 2.0")))
+
+                .addSecurityItem(
+                        new SecurityRequirement()
+                                .addList(securitySchemeName)
+                )
+
+                .schemaRequirement(
+                        securitySchemeName,
+                        new SecurityScheme()
+                                .name(securitySchemeName)
+                                .type(SecurityScheme.Type.HTTP)
+                                .scheme("bearer")
+                                .bearerFormat("JWT")
+                );
     }
 }
